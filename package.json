@@ -17,7 +17,6 @@
     "doxx": "^2.1.1",
     "jasmine-expect": "^2.0.2",
     "jasmine-node": "^1.14.5",
-    "jsdoc": "^3.4.0",
     "mr-doc": "^3.1.2",
     "uglify-js": "^2.6.1"
   },
@@ -25,7 +24,6 @@
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./test",
     "build": "uglifyjs src/node/javaparser.js -c \"evaluate=false\" -m --source-map src/bower/javaparser-min.map -o src/bower/javaparser-min.js",
-    "docs": "jsdoc -p javaparser.js -d docs",
-    "doxx": "mr-doc -s src/node -o docs"
+    "docs": "mr-doc -s src/node -o docs"
   }
 }

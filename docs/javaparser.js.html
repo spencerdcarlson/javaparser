@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" charset="utf-8">
+    <title>mr-doc</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/cayman.min.css">
+    <link rel="stylesheet" href="css/prism.min.css">
+    <link rel="stylesheet" href="css/index.min.css">
+    <link rel="stylesheet" href="css/docs.min.css">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+  </head>
+  <body data-spy="scroll" data-target=".scrollspy">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container"><a class="brand">Mr. Doc</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav pull-right sponsored"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <header id="overview" class="jumbotron subhead">
+      <div class="container">
+        <h1>mr-doc</h1>
+        <p class="lead"></p>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+        <div class="span3 bs-docs-sidebar">
+          <ul class="nav nav-list bs-docs-sidenav affix-top">
+            <li><a href="index.html">Main</a></li>
+            <li class="active"><a href="javaparser.js.html">javaparser.js</a></li>
+          </ul>
+          <div class="scrollspy">
+            <ul class="nav nav-list bs-docs-sidenav affix-top">
+              <li><a href="#JavaParser"><i class="alert alert-success"></i><span>JavaParser</span></a>
+              </li>
+              <li><a href="#parse"><i class="alert alert-info"></i><span>parse</span></a>
+              </li>
+              <li><a href="#noConflict"><i class="alert alert-info"></i><span>noConflict</span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="span9">
+          <section id="JavaParser">
+            <h1>JavaParser</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">constructor</div><span>&nbsp;</span><span>JavaParser()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"></div>
+          <pre><code class="language-javascript">var JavaParser = function(){
+
+
+};</code></pre>
+          <section id="parse">
+            <h1>parse</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>JavaParser.parse()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>file</td>
+                <td>string</td>
+                <td><ul>
+<li>Full path to a java file.</li>
+</ul>
+</td>
+              </tr>
+              <tr>
+                <td>cb</td>
+                <td>function</td>
+                <td><ul>
+<li>Callback method. (err, data) =&gt; { }.</li>
+</ul>
+</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Parses a .java file</p></div>
+          <pre><code class="language-javascript">JavaParser.parse = function parse(file, cb) {
+  const rl = readline.createInterface({
+    input: fs.createReadStream(file),
+    output: process.stdout
+  });
+
+  var singleLineComments = [];
+  var multiLineComments = [];
+  var multiLineComment = '';
+  var isMultiLineComment = false;
+  var isSingleLineComment = false;
+  var code = '';
+  var obj = {};
+
+  rl.on('line', function(line) {  
+    if(line.indexOf('//') &gt; -1){
+      isSingleLineComment = true;
+      singleLineComments.push(line + '\n');
+    }
+
+    if(isMultiLineComment){
+      multiLineComment += line + '\n';
+    }
+    if(line.indexOf('/**') &gt; -1){
+      multiLineComment += line + '\n';
+      isMultiLineComment = true;
+    }
+    
+
+    if(!isSingleLineComment &amp;&amp; !isMultiLineComment){
+      code += line + '\n';
+    }
+
+    if(line.indexOf('**/') &gt; -1){
+      isMultiLineComment = false;
+      multiLineComments.push(multiLineComment);
+    }
+
+    isSingleLineComment = false;
+
+  });
+
+
+  rl.on('close', function() {
+    var data = {
+      inline:  singleLineComments,
+      multiline: multiLineComments,
+      code: code
+    };
+    cb(null, data);
+  });
+}</code></pre>
+          <section id="noConflict">
+            <h1>noConflict</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>JavaParser.noConflict()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>noConflict method to mimic JQuery</p></div>
+          <pre><code class="language-javascript">JavaParser.noConflict = function() {
+  root.JavaParser = previous_javaparser
+  return JavaParser
+}
+
+// prepare 
+if( typeof exports !== 'undefined' ) {
+  // Node module
+  if( typeof module !== 'undefined' &amp;&amp; module.exports ) {
+    exports = module.exports = JavaParser
+  }
+  exports.JavaParser = JavaParser
+}
+else {
+  // Bowser module
+  root.JavaParser = JavaParser
+}
+
+}).call(this);</code></pre>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <p>Documentation generated with <a href="https://github.com/mr-doc/mr-doc">Mr. Doc </a> created by <a href="https://twitter.com/FGRibreau" data-show-count="false" class="twitter-follow-button">Francois-Guillaume Ribreau </a></p>
+        <p>Mr. Doc is sponsored by <a href="http://bringr.net/?btt" title="Outil d'analyse des réseaux sociaux" class="bringr">Bringr </a> and <a href="https://redsmin.com/?btt" title="Full Redis GUI" class="redsmin">Redsmin</a></p>
+        <p>Theme borrowed from Twitter Bootstrap</p>
+      </div>
+    </footer>
+    <script src="js/twitter-widget.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap-transition.min.js"></script>
+    <script src="js/bootstrap-scrollspy.min.js"></script>
+    <script src="js/bootstrap-dropdown.min.js"></script>
+    <script src="js/bootstrap-collapse.min.js"></script>
+    <script src="js/bootstrap-affix.min.js"></script>
+    <script src="js/prism.min.js"></script>
+    <script src="js/index.min.js"></script>
+  </body>
+</html>

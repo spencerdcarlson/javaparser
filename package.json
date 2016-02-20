@@ -1,0 +1,20 @@
+{
+  "name": "javaparser",
+  "description": "Parse .java file and provide content.",
+  "homepage": "",
+  "keywords": [
+    "java",
+    "parse"
+  ],
+  "author": "Spencer Carlson <spencerdcarlson@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/spencerdcarlson/javaparser.git"
+  },
+  "main": "javaparser.js",
+  "version": "1.0.0",
+  "devDependencies": {
+    "jasmine-node": "^1.14.5"
+  },
+  "license": "MIT"
+}

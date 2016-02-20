@@ -1,7 +1,7 @@
 {
   "name": "javaparser",
   "description": "Parse .java file and provide content.",
-  "homepage": "",
+  "homepage": "https://github.com/spencerdcarlson/javaparser.git",
   "keywords": [
     "java",
     "parse"
@@ -9,12 +9,18 @@
   "author": "Spencer Carlson <spencerdcarlson@gmail.com",
   "repository": {
     "type": "git",
-    "url": "git://github.com/spencerdcarlson/javaparser.git"
+    "url": "https://github.com/spencerdcarlson/javaparser.git"
   },
   "main": "javaparser.js",
   "version": "1.0.0",
   "devDependencies": {
-    "jasmine-node": "^1.14.5"
+    "jasmine-expect": "^2.0.2",
+    "jasmine-node": "^1.14.5",
+    "uglify-js": "^2.6.1"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "./node_modules/.bin/jasmine-node ./test",
+    "build": "uglifyjs javaparser.js -c \"evaluate=false\" -m --source-map javaparser-min.map -o javaparser-min.js"
+  }
 }

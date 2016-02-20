@@ -32,7 +32,7 @@
       var code = '';
       var obj = {};
 
-      rl.on('line', (line) => {  
+      rl.on('line', function(line) {  
         if(line.indexOf('//') > -1){
           isSingleLineComment = true;
           singleLineComments.push(line + '\n');
@@ -61,7 +61,7 @@
       });
 
 
-      rl.on('close', () => {
+      rl.on('close', function() {
         var data = {
           inline:  singleLineComments,
           multiline: multiLineComments,

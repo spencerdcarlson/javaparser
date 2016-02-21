@@ -10,12 +10,16 @@
     if(has_require) {
       _ = require('fs');
       _ = require('readline');
+      _ = require('./rmstream');
     }
     else throw new Error('JavaParser requires the [fs, readline] modules');
   }
 
   const fs = require('fs');
   const readline = require('readline');
+  const stream = require('stream');
+  const rmstream = require('./rmstream');
+  
 
   /**
   * @constructor
@@ -24,6 +28,13 @@
 
 
   };
+
+function completer(line) {
+  var completions = '.help .error .exit .quit .q'.split(' ')
+  var hits = completions.filter((c) => { return c.indexOf(line) == 0 })
+  // show all completions if none found
+  return [hits.length ? hits : completions, line]
+}
   
 
   /**
@@ -31,9 +42,23 @@
   * @param {string} file - Full path to a java file.
   * @param {function} cb - Callback method. (err, data) => { }.
   **/
-  JavaParser.parse = function parse(file, cb) {
+  JavaParser.parse = function parse(file, options, cb) {
+    var isStream = false;
+    
+    if(typeof options !== 'undefined'){
+      isStream = options.isStream;
+    }
+
+    
+    if(isStream){
+      var stream =  new rmstream(file);
+    }
+    else {
+      var stream = fs.createReadStream(file);
+    }
+
     const rl = readline.createInterface({
-      input: fs.createReadStream(file),
+      input: stream,
       output: process.stdout
     });
 
@@ -46,6 +71,11 @@
     var obj = {};
 
     rl.on('line', function(line) {  
+      // Check for manual EOF
+      if(line.indexOf('^EOS') > -1){
+        rl.close();
+      }
+
       if(line.indexOf('//') > -1){
         isSingleLineComment = true;
         singleLineComments.push(line + '\n');

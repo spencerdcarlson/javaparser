@@ -14,7 +14,7 @@ function RMStream(string, options) {
   }
   Readable.call(this, options);
   this.push(string);
-  this.push('^EOS\n');
+  this.push('EOS\n');
 }
 util.inherits(RMStream, Readable);
 

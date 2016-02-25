@@ -19,6 +19,8 @@
   const readline = require('readline');
   const stream = require('stream');
   const rmstream = require('./rmstream');
+  const parser = require('./parser');
+  const util = require('./util');
   
 
   /**
@@ -26,16 +28,25 @@
   **/
   var JavaParser = function(){
 
-
   };
 
-function completer(line) {
-  var completions = '.help .error .exit .quit .q'.split(' ')
-  var hits = completions.filter((c) => { return c.indexOf(line) == 0 })
-  // show all completions if none found
-  return [hits.length ? hits : completions, line]
-}
-  
+
+
+
+
+  JavaParser.parseSync = (file, options) => {
+    return new Promise(function (fulfill, reject){
+      JavaParser.parse(file, options, (err, res)=>{
+        if (err) reject(err);
+        else {
+          parser.parse(res.ifqa, (e,r) => {
+            res.annotations = r;
+            fulfill(res);
+          });
+        } 
+      });
+    });
+  }
 
   /**
   * Parses a .java file
@@ -48,7 +59,6 @@ function completer(line) {
     if(typeof options !== 'undefined'){
       isStream = options.isStream;
     }
-
     
     if(isStream){
       var stream =  new rmstream(file);
@@ -62,55 +72,78 @@ function completer(line) {
       output: process.stdout
     });
 
-    var singleLineComments = [];
-    var multiLineComments = [];
+    var result = {
+      inline: [],
+      multiline: [],
+      ifqa: [],
+      code: []
+    };
+      
     var multiLineComment = '';
     var isMultiLineComment = false;
     var isSingleLineComment = false;
-    var code = '';
-    var obj = {};
+    var isIFQA = false;
+    var isChomped = false;
 
-    rl.on('line', function(line) {  
-      // Check for manual EOF
-      if(line.indexOf('^EOS') > -1){
+    rl.on('line', (line) => {  
+      if(/EOS/.test(line)){
         rl.close();
       }
 
-      if(line.indexOf('//') > -1){
+      if(/@IFQA/.test(line)){
+        isIFQA = true;
+      }
+    
+      if(!isIFQA){
+        result.code.push(line + '\n');
+      }
+
+      // Check for single line comment '//'
+      if(/\/\//.test(line)){
         isSingleLineComment = true;
-        singleLineComments.push(line + '\n');
+        result.inline.push(line + '\n');
+        if(isIFQA){
+          result.ifqa.push(line + '\n');
+          isIFQA = false;
+        }
       }
 
       if(isMultiLineComment){
         multiLineComment += line + '\n';
       }
-      if(line.indexOf('/**') > -1){
+
+      // Check for start of a multiline comment '/*'
+      if(/\/\*/.test(line)){
+        isChomped = false;
         multiLineComment += line + '\n';
         isMultiLineComment = true;
       }
       
-
-      if(!isSingleLineComment && !isMultiLineComment){
-        code += line + '\n';
+      // Check for end of multiline comment '*/'
+      if(/\*\//.test(line)){
+        isMultiLineComment = false;
+        result.multiline.push(multiLineComment);
+        if(isIFQA){
+          result.ifqa.push(multiLineComment);
+          isIFQA = false;
+        }
+        multiLineComment = '';
       }
 
-      if(line.indexOf('**/') > -1){
-        isMultiLineComment = false;
-        multiLineComments.push(multiLineComment);
+      if(isMultiLineComment && isIFQA){
+        if(!isChomped) {
+          result.code.pop();
+          isChomped = true;
+        }
       }
 
       isSingleLineComment = false;
 
     });
 
-
-    rl.on('close', function() {
-      var data = {
-        inline:  singleLineComments,
-        multiline: multiLineComments,
-        code: code
-      };
-      cb(null, data);
+    rl.on('close', () => {
+      result.code = result.code.join('');
+      cb(null, result);
     });
   }
 
@@ -136,19 +169,3 @@ function completer(line) {
   }
 
 }).call(this);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,7 +5,7 @@ var readline = require('readline');
 
 function Parser(){};
 
-Parser.parse = (ifqa, cb) => {
+Parser.parse = (ifqa, cb, options) => {
     var parsed = new Parsed();
     var stream =  new RMStream(ifqa.join(''));
 

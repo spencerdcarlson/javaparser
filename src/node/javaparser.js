@@ -42,7 +42,7 @@
           parser.parse(res.ifqa, (e,r) => {
             res.annotations = r;
             fulfill(res);
-          });
+          }, options);
         } 
       });
     });

@@ -69,7 +69,7 @@
 
     const rl = readline.createInterface({
       input: stream,
-      output: process.stdout
+      output: (options.stdout === undefined) ? process.stdout : options.stdout
     });
 
     var result = {

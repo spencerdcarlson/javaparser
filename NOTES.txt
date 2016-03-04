@@ -1,0 +1,11 @@
+##Rules
+Only one parameter per line
+Parameters can only exist in multiline comments and must start with a * @IFQA\n /* here */
+
+##Defects 
+if you are using {isStream: true} and the stream has a trailing \n then you will see the following error:
+	TypeError: result.code.push is not a function
+    at Interface.<anonymous> (/Users/sc/drive/projects/node/ocp_practice/node_modules/javaparser/src/node/javaparser.js:98:21)
+    at emitOne (events.js:77:13)
+    at Interface.emit (events.js:169:7)
+    at Interface._onLine (readline.js:210:10)

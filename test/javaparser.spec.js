@@ -16,10 +16,10 @@ describe('JavaParser', function(){
 	const cwd = process.argv[1].substr(0, process.argv[1].indexOf('node_modules'));
 	const path = cwd + 'test/Shuttle.java';
 	// Read from file
-	options = { isStream: false };
+	options = { isStream: false, stdout: '/dev/null' };
 	JavaParser.parseSync(path, options).then((res) => {
 		expect(res).toBeDefined();
-		console.log(res.annotations.get('@Option'));
+		// console.log(res.annotations.get('@Option'));
 		done();
 	});
   });
@@ -28,7 +28,7 @@ describe('JavaParser', function(){
 	// Read from stream
 	const cwd = process.argv[1].substr(0, process.argv[1].indexOf('node_modules'));
 	const path = cwd + 'test/Shuttle.java';
-	var options = {isStream: true};
+	var options = {isStream: true, stdout: '/dev/null'};
 	fs.readFile(path, 'utf8', function (err,data) {
 	  if (err) return console.log(err);
 	  JavaParser.parseSync(data, options).then((res) => {
